@@ -28,5 +28,13 @@
     "no-shadow": 0,
     "no-underscore-dangle": 0,
     "no-unused-vars": [0, { "varsIgnorePattern": "^h$" }]
+  },
+
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".json"]
+      }
+    }
   }
 }
