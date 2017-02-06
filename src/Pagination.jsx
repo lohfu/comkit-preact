@@ -3,7 +3,6 @@ import { omit } from 'lowline';
 
 import qs from 'mini-qs'
 
-console.log(qs);
 export default ({ totalCount, query, perPage }) => {
   const path = window.location.pathname;
 
