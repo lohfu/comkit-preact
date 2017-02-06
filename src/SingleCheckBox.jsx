@@ -17,19 +17,22 @@ export default class SingleCheckBox extends FormElement {
 
     return (
       <div class={classes}>
-        <input
-          name={name}
-          disabled={disabled}
-          onBlur={this.onBlur}
-          onChange={this.onChange}
-          onFocus={this.onFocus}
-          onInput={this.onChange}
-          ref={(input) => { this.input = input; }}
-          type="checkbox"
-        />
-        {title}
-        <label class="icon" />
-        {state.error && <label class="error">{state.error}</label>}
+        <label class="checkbox">
+          <input
+            name={name}
+            disabled={disabled}
+            onBlur={this.onBlur}
+            onChange={this.onChange}
+            onFocus={this.onFocus}
+            onInput={this.onChange}
+            ref={(input) => { this.input = input; }}
+            type="checkbox"
+          />
+          <i></i>
+          <span>{title}</span>
+          {state.error && <label class="error">{state.error}</label>}
+          <label class="icon" />
+        </label>
       </div>
     );
   }
