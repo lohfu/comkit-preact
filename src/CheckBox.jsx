@@ -5,7 +5,11 @@ import { omit } from 'lowline';
 import FormElement from './FormElement';
 
 export default (props, context) => {
-  const { onChange, name, value } = context.group;
+  let { onChange, idAttribute, name, value } = context.group;
+
+  if (idAttribute && value) {
+    value = value.map((item) => item[idAttribute]);
+  }
 
   return (
     <label class="checkbox">
