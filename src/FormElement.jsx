@@ -26,6 +26,7 @@ export default class FormElement extends Component {
   onBlur(e) {
     this.setState({
       focus: false,
+      touched: true,
     });
 
     this.setValue(e.target.value);
@@ -42,12 +43,17 @@ export default class FormElement extends Component {
   onFocus() {
     this.setState({
       focus: true,
-      touched: true,
     });
   }
 
   focus() {
     this.input.focus();
+  }
+
+  touch() {
+    this.setState({
+      touched: true,
+    });
   }
 
   isValid() {
@@ -58,14 +64,15 @@ export default class FormElement extends Component {
     return this.state.value;
   }
 
-  setValue(value) {
+  setValue(value, untouch = false) {
     if (value === '') {
-      value = undefined;
+      value = null;
     }
 
     this.setState({
-      dirty: value !== this.props.value,
+      dirty: value !== this.context.initialAttributes[this.props.name],
       error: this.validate(value),
+      touched: !untouch,
       value,
     });
 
@@ -93,6 +100,17 @@ export default class FormElement extends Component {
   }
 
   reset() {
-    this.setValue(this.props.value);
+    const initialAttributes = this.context.initialAttributes;
+
+    let hasInitialProps;
+
+    for (const prop in initialAttributes) {
+      if (initialAttributes[prop]) {
+        hasInitialProps = true;
+        break;
+      }
+    }
+
+    this.setValue(initialAttributes[this.props.name], !hasInitialProps);
   }
 }
