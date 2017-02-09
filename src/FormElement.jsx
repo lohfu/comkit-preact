@@ -16,11 +16,15 @@ export default class FormElement extends Component {
   }
 
   componentDidMount() {
-    this.unregister = this.context.registerInput(this);
+    if (this.context && this.context.registerInput) {
+      this.unregister = this.context.registerInput(this);
+    }
   }
 
   componentWillUnmount() {
-    this.unregister();
+    if (this.unregister) {
+      this.unregister();
+    }
   }
 
   onBlur(e) {
