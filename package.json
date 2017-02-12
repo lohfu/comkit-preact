@@ -1,5 +1,5 @@
 {
-  "name": "comkit",
+  "name": "comkit-preact",
   "version": "0.1.0",
   "description": "Collection of Preact components",
   "main": "node/index.js",
