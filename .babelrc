@@ -5,12 +5,14 @@
       "plugins": [
         "add-module-exports",
         ["transform-react-jsx", { "pragma": "h" }],
-        ["jsx-node/babel/alias", {
-          "lowline": "lodash",
-          "preact": "jsx-node",
-          "mini-qs": "querystring"
-        }],
-        ["jsx-node/babel/stringify"]
+        ["module-resolver", {
+          "alias": {
+            "easy-tz": "easy-tz/cjs",
+            "lowline": "lodash",
+            "mini-qs": "querystring",
+            "preact": "jsx-node"
+          }
+        }]
       ]
     }
   }
