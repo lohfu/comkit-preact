@@ -1,4 +1,5 @@
 import { h } from 'preact';
+import classNames from 'classnames';
 
 import FormElement from './FormElement';
 
@@ -16,7 +17,7 @@ export default class SingleCheckBox extends FormElement {
     });
 
     return (
-      <div class={classes}>
+      <div class={classNames(classes)}>
         <label class="checkbox">
           <input
             name={name}

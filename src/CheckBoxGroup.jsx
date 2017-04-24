@@ -1,6 +1,6 @@
 import { h, Component } from 'preact';
-
 import { omit } from 'lowline';
+import classNames from 'classnames';
 
 import FormElement from './FormElement';
 
@@ -23,13 +23,11 @@ export default class CheckBoxGroup extends FormElement {
     let groupValue = this.state.value || [];
     let inputValue = +e.target.value || e.target.value;
 
-    console.log(groupValue);
     if (e.target.checked) {
       if (this.props.idAttribute) {
         inputValue = this.props.values.find((item) => item[this.props.idAttribute] === inputValue);
       }
 
-      console.log(inputValue);
       groupValue = groupValue.concat(inputValue).sort(this.props.idAttribute ? (a, b) => {
         let sortAttribute = this.props.sortAttribute || this.props.idAttribute;
         let desc = false;
@@ -53,13 +51,11 @@ export default class CheckBoxGroup extends FormElement {
       groupValue = groupValue.filter((value) => {
         if (this.props.idAttribute) {
           return value[this.props.idAttribute] !== inputValue;
-          // inputValue = this.props.values.find((item) => item[this.props.idAttribute] === inputValue);
         }
 
         return value !== inputValue;
       });
     }
-    console.log(groupValue);
 
     this.setValue(groupValue.length ? groupValue : undefined);
   }
@@ -102,7 +98,7 @@ export default class CheckBoxGroup extends FormElement {
     });
 
     return (
-      <div class={classes}>
+      <div class={classNames(classes)}>
         {children}
         <label class="icon" />
         {state.error && <label class="error">{state.error}</label>}

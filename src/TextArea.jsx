@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-
+import classNames from 'classnames';
 import { omit } from 'lowline';
 
 import FormElement from './FormElement';
@@ -30,7 +30,7 @@ export default class TextArea extends FormElement {
     });
 
     return (
-      <div class={classes}>
+      <div class={classNames(classes)}>
         <label className="placeholder">{placeholder}</label>
         <textarea
           disabled={disabled}

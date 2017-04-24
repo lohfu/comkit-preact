@@ -1,13 +1,6 @@
 import { h, Component } from 'preact';
-
-// modules > lodas
-import set from 'set-value';
-import unset from 'unset-value';
-import get from 'get-value';
-import { omit, forEach, bindAll } from 'lowline';
-
-// import Input from '../components/Input.jsx'
 import deepEqual from 'deep-equal';
+import { set, get, omit, forEach, bindAll } from 'lowline';
 
 export default class Form extends Component {
   constructor(props) {
@@ -17,7 +10,13 @@ export default class Form extends Component {
 
     this.inputs = [];
 
-    this.componentWillReceiveProps(props);
+    this.attributes = props.attributes || {};
+    this.initialAttributes = Object.assign({}, this.attributes);
+
+    this.state = {
+      dirty: false,
+      valid: this.validate(),
+    };
   }
 
   getChildContext() {
@@ -29,7 +28,7 @@ export default class Form extends Component {
   }
 
   componentWillReceiveProps(props = {}) {
-    this.resetAttributes(omit(props, 'children'));
+    this.resetAttributes(props.attributes);
   }
 
   registerInput(component) {
@@ -57,15 +56,20 @@ export default class Form extends Component {
   }
 
   setAttribute(attr, value) {
-    const filter = get(this.filters, attr);
+    // const filter = get(this.filters, attr);
 
-    if (filter) value = filter(value);
+    // if (filter) value = filter(value);
 
     set(this.attributes, attr, value);
 
-    this.setState({
-      dirty: !deepEqual(this.attributes, this.initialAttributes),
-      valid: this.validate(),
+    // skip a tick to let form element state update (if this.validate is called
+    // immediately, the child/form element component will not have updated it's
+    // state... ie the error field could be wrong
+    setTimeout(() => {
+      this.setState({
+        dirty: !deepEqual(this.attributes, this.initialAttributes),
+        valid: this.validate(),
+      });
     });
   }
 
@@ -84,6 +88,7 @@ export default class Form extends Component {
   }
 
   validate(focus = false, touch = false) {
+    // TODO maybe put this somewhere else
     if (touch) {
       this.inputs.forEach((input) => input.touch());
     }

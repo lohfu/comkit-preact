@@ -30,6 +30,7 @@
   },
   "homepage": "https://github.com/lohfu/comkit#readme",
   "dependencies": {
+    "classnames": "^2.2.5",
     "deep-equal": "^1.0.1",
     "lodash": "^4.17.4",
     "lowline": "^0.1.3",
