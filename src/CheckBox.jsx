@@ -13,7 +13,7 @@ export default (props, context) => {
 
   return (
     <label class="checkbox">
-      <input type="checkbox" name={name} checked={value && value.includes(props.value)} value={props.value} onChange={onChange} /><i></i><span>{props.title}</span>
+      <input type="checkbox" name={name} checked={!!value && value.includes(props.value)} value={props.value} onChange={onChange} /><i></i><span>{props.title}</span>
     </label>
   );
 };

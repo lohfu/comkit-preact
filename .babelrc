@@ -9,8 +9,7 @@
           "alias": {
             "easy-tz": "easy-tz/cjs",
             "lowline": "lodash",
-            "mini-qs": "querystring",
-            "preact": "jsx-node"
+            "mini-qs": "querystring"
           }
         }]
       ]

@@ -6,9 +6,11 @@ import FormElement from './FormElement';
 
 export default class CheckBoxGroup extends FormElement {
   constructor(props, ...args) {
-    if (typeof props.values[0] === 'object' && !props.idAttribute) {
+    if (props.values && typeof props.values[0] === 'object' && !props.idAttribute) {
       throw new Error('Object arrays need idAttribute');
     }
+
+    if (props.value && !Array.isArray(props.value)) props.value = [props.value];
 
     super(props, ...args);
   }
@@ -19,13 +21,15 @@ export default class CheckBoxGroup extends FormElement {
     if (document.activeElement !== e.target) return;
 
     let groupValue = this.state.value || [];
-    let inputValue = parseInt(e.target.value, 10) || e.target.value;
+    let inputValue = +e.target.value || e.target.value;
 
+    console.log(groupValue);
     if (e.target.checked) {
       if (this.props.idAttribute) {
         inputValue = this.props.values.find((item) => item[this.props.idAttribute] === inputValue);
       }
 
+      console.log(inputValue);
       groupValue = groupValue.concat(inputValue).sort(this.props.idAttribute ? (a, b) => {
         let sortAttribute = this.props.sortAttribute || this.props.idAttribute;
         let desc = false;
@@ -55,6 +59,7 @@ export default class CheckBoxGroup extends FormElement {
         return value !== inputValue;
       });
     }
+    console.log(groupValue);
 
     this.setValue(groupValue.length ? groupValue : undefined);
   }
