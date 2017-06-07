@@ -1,16 +1,20 @@
-import { h, Component } from 'preact';
-import { omit } from 'lowline';
+import { h } from 'preact';
+
 import classNames from 'classnames';
 
-import FormElement from './FormElement';
+import { omit } from 'lowline';
 
-export default class CheckBoxGroup extends FormElement {
+import FormField from './FormField';
+
+class CheckBoxGroup extends FormField {
   constructor(props, ...args) {
     if (props.values && typeof props.values[0] === 'object' && !props.idAttribute) {
       throw new Error('Object arrays need idAttribute');
     }
 
-    if (props.value && !Array.isArray(props.value)) props.value = [props.value];
+    if (!Array.isArray(props.value)) {
+      props.value = [props.value];
+    }
 
     super(props, ...args);
   }
@@ -60,21 +64,6 @@ export default class CheckBoxGroup extends FormElement {
     this.setValue(groupValue.length ? groupValue : undefined);
   }
 
-  setValue(value) {
-    if (value === '') {
-      value = undefined;
-    }
-
-    this.setState({
-      touched: true,
-      dirty: value !== this.props.value,
-      error: this.validate(value),
-      value,
-    });
-
-    this.context.setAttribute(this.props.name, value);
-  }
-
   getChildContext() {
     return {
       group: {
@@ -86,7 +75,10 @@ export default class CheckBoxGroup extends FormElement {
     };
   }
 
-  render({ type = 'text', disabled, children, placeholder, values, value, idProp, nameProp }, state = {}, context) {
+  render() {
+    const { type = 'text', disabled, children, placeholder, values, value, idProp, nameProp } = this.props;
+    const state = this.state;
+
     const classes = Object.assign({
       'field-container': true,
       'checkbox-group': true,
@@ -98,11 +90,13 @@ export default class CheckBoxGroup extends FormElement {
     });
 
     return (
-      <div class={classNames(classes)}>
+      <div className={classNames(classes)}>
         {children}
-        <label class="icon" />
-        {state.error && <label class="error">{state.error}</label>}
+        <label className="icon" />
+        {state.error && <label className="error">{state.error}</label>}
       </div>
     );
   }
 }
+
+export default CheckBoxGroup;

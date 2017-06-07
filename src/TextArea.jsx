@@ -1,50 +1,58 @@
-import { h, Component } from 'preact';
-import classNames from 'classnames';
-import { omit } from 'lowline';
+import { h } from 'preact'
 
-import FormElement from './FormElement';
+import classNames from 'classnames'
 
-export default class TextArea extends FormElement {
-  onFocus(e) {
+import FormField from './FormField'
+
+class TextArea extends FormField {
+  onFocus (e) {
     this.setState({
       focus: true,
-      touched: true,
-    });
+      touched: true
+    })
 
-    if (document.documentElement.dataset.browser === 'IE11') {
+    // TODO still needed?
+    if (document.documentField.dataset.browser === 'IE11') {
       // make text area behave like input in IE (input fires both
       // focus and input when focusing input elements, but not textareas)
-      this.setValue(e.target.value);
+      this.setValue(e.target.value)
     }
   }
 
-  render({ disabled, placeholder }, state = {}) {
-    const classes = Object.assign({
+  render () {
+    const { disabled, name, placeholder } = this.props
+    const state = this.state
+
+    const classes = {
       'field-container': true,
+      cell: true,
       empty: !state.value,
-      filled: state.value,
+      filled: !!state.value,
+      dirty: state.dirty,
       focus: state.focus,
-      invalid: state.error,
+      invalid: !!state.error,
       touched: state.touched,
-      valid: state.value && !state.error,
-    });
+      valid: !state.error
+    }
 
     return (
-      <div class={classNames(classes)}>
-        <label className="placeholder">{placeholder}</label>
+      <div className={classNames(classes)}>
+        <label className='placeholder'>{placeholder}</label>
         <textarea
+          name={name}
           disabled={disabled}
           onFocus={this.onFocus}
           onBlur={this.onBlur}
           onChange={this.onChange}
-          onInput={this.onChange}
           placeholder={placeholder}
           ref={(input) => (this.input = input)}
           value={state.value}
         />
-        <label class="icon" />
-        {state.error && <label class="error">{state.error}</label>}
+        <label className='icon' />
+        {state.error && <label className='error'>{state.error}</label>}
       </div>
-    );
+    )
   }
 }
+
+export default TextArea

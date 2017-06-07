@@ -1,116 +1,145 @@
-import { h, Component } from 'preact';
-import deepEqual from 'deep-equal';
-import { set, get, omit, forEach, bindAll } from 'lowline';
+import { h, Component } from 'preact'
+import { set, bindAll } from 'lowline'
 
-export default class Form extends Component {
-  constructor(props) {
-    super(props);
+class Form extends Component {
+  constructor (...args) {
+    super(...args)
 
-    bindAll(this, ['reset', 'registerInput', 'setAttribute', 'resetAttributes']);
+    bindAll(this, ['reset', 'registerField', 'onChange', 'onSubmit'])
 
-    this.inputs = [];
-
-    this.attributes = props.attributes || {};
-    this.initialAttributes = Object.assign({}, this.attributes);
-
-    this.state = {
-      dirty: false,
-      valid: this.validate(),
-    };
+    this.fields = []
+    this.state = this.getInitialState()
   }
 
-  getChildContext() {
+  getInitialState (props = this.props) {
     return {
-      initialAttributes: this.initialAttributes,
-      setAttribute: this.setAttribute,
-      registerInput: this.registerInput,
-    };
+      dirty: [],
+      errors: []
+    }
   }
 
-  componentWillReceiveProps(props = {}) {
-    this.resetAttributes(props.attributes);
+  getChildContext () {
+    return {
+      registerField: this.registerField,
+      onChange: this.onChange
+    }
   }
 
-  registerInput(component) {
-    this.inputs.push(component);
-
-    // check if any initial props are not null
-    for (const prop in this.initialAttributes) {
-      if (this.initialAttributes[prop]) {
-        component.touch();
-        break;
-      }
+  componentDidUpdate (prevProps) {
+    if (prevProps.values !== this.props.values) {
+      this.reset()
     }
+  }
 
-    const name = component.props.name;
-
-    if (!this.attributes.hasOwnProperty(name)) {
-      this.attributes[name] = this.initialAttributes[name] = null;
-    }
+  registerField (component) {
+    this.fields.push(component)
 
     return () => {
-      const index = this.inputs.indexOf(component);
+      const index = this.fields.indexOf(component)
 
-      delete this.inputs.splice(index, 1);
-    };
+      this.fields.splice(index, 1)
+    }
   }
 
-  setAttribute(attr, value) {
-    // const filter = get(this.filters, attr);
+  onChange ({ dirty, error, name, value }) {
+    const state = {}
 
-    // if (filter) value = filter(value);
+    const wasPreviouslyDirty = this.state.dirty.includes(name)
 
-    set(this.attributes, attr, value);
-
-    // skip a tick to let form element state update (if this.validate is called
-    // immediately, the child/form element component will not have updated it's
-    // state... ie the error field could be wrong
-    setTimeout(() => {
-      this.setState({
-        dirty: !deepEqual(this.attributes, this.initialAttributes),
-        valid: this.validate(),
-      });
-    });
-  }
-
-  resetAttributes(attrs, validate) {
-    this.attributes = attrs || this.initialAttributes || {};
-    this.initialAttributes = Object.assign({}, this.attributes);
-
-    this.setState({
-      dirty: false,
-      valid: this.validate(),
-    });
-  }
-
-  toJSON() {
-    return Object.assign({}, this.attributes);
-  }
-
-  validate(focus = false, touch = false) {
-    // TODO maybe put this somewhere else
-    if (touch) {
-      this.inputs.forEach((input) => input.touch());
+    if (!dirty) {
+      if (wasPreviouslyDirty) {
+        state.dirty = this.state.dirty.filter((n) => n !== name)
+      }
+    } else if (!wasPreviouslyDirty) {
+      state.dirty = this.state.dirty.concat(name)
     }
 
-    return this.inputs.every((input) => {
-      const isValid = input.isValid();
+    const previousError = this.state.errors.find((arr) => arr[0] === name)
 
-      if (!isValid && focus) input.focus();
+    if (!error) {
+      if (previousError) {
+        state.errors = this.state.errors.filter((arr) => arr[0] !== name)
+      }
+    } else if (!previousError) {
+      state.errors = this.state.errors.concat([[name, error]])
+    } else if (previousError && previousError[1] !== error) {
+      state.errors = this.state.errors.filter((arr) => arr[0] !== name).concat([[name, error]])
+    }
 
-      return isValid;
-    });
+    this.setState(state)
   }
 
-  reset() {
-    this.resetAttributes();
-
-    forEach(this.inputs, (input) => input.reset());
+  isDirty () {
+    return this.state.dirty.length !== 0
   }
 
-  render({ children }) {
+  isValid () {
+    return this.state.errors.length === 0
+  }
+
+  validate (focus = false, touch = false) {
+    const errors = this.fields.reduce((result, field) => {
+      const error = field.validate()
+
+      field.setState({ error })
+
+      // focus first invalid element
+      if (focus && result.length === 0 && error) {
+        field.focus()
+      }
+
+      // only touch invalid or filled elements when validating
+      if (touch) {
+        if (error || field.getValue() != null) {
+          field.touch()
+        } else {
+          field.untouch()
+        }
+      }
+
+      if (error) {
+        result.push([field.name, error])
+      }
+
+      return result
+    }, [])
+
+    this.setState({ errors })
+
+    return errors.length === 0
+  }
+
+  toJSON () {
+    // TODO implement returning only changed values
+    // ie compare with props.values
+    return this.fields.reduce((json, field) => {
+      const value = field.getValue()
+
+      if (value != null) {
+        set(json, field.name, value)
+      }
+
+      return json
+    }, {})
+  }
+
+  reset () {
+    this.fields.forEach((field) => field.reset(true))
+
+    this.setState(this.getInitialState())
+  }
+
+  render () {
+    const { children } = this.props
+
     return (
       <form>{children}</form>
-    );
+    )
   }
 }
+
+Form.defaultProps = {
+  values: {}
+}
+
+export default Form
