@@ -10,13 +10,6 @@ class TextArea extends FormField {
       focus: true,
       touched: true
     })
-
-    // TODO still needed?
-    if (document.documentField.dataset.browser === 'IE11') {
-      // make text area behave like input in IE (input fires both
-      // focus and input when focusing input elements, but not textareas)
-      this.setValue(e.target.value)
-    }
   }
 
   render () {
