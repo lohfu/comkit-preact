@@ -3,7 +3,7 @@ import classNames from 'classnames'
 
 import FormField from './FormField'
 
-export default class SingleCheckBox extends FormField {
+export default class SingleCheckbox extends FormField {
   render () {
     const { name, disabled, title } = this.props
     const state = this.state

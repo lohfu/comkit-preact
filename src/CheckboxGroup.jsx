@@ -6,7 +6,7 @@ import { omit } from 'lowline';
 
 import FormField from './FormField';
 
-class CheckBoxGroup extends FormField {
+class CheckboxGroup extends FormField {
   constructor(props, ...args) {
     if (props.values && typeof props.values[0] === 'object' && !props.idAttribute) {
       throw new Error('Object arrays need idAttribute');
@@ -99,4 +99,4 @@ class CheckBoxGroup extends FormField {
   }
 }
 
-export default CheckBoxGroup;
+export default CheckboxGroup;

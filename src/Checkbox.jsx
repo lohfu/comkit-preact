@@ -2,7 +2,7 @@ import { h } from 'preact';
 
 import { omit } from 'lowline';
 
-const CheckBox = (props, context) => {
+const Checkbox = (props, context) => {
   let { onChange, idAttribute, name, value } = context.group;
 
   if (idAttribute && value) {
@@ -21,4 +21,4 @@ const CheckBox = (props, context) => {
   );
 };
 
-export default CheckBox;
+export default Checkbox;
