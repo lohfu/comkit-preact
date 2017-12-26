@@ -1,10 +1,25 @@
 {
   "env": {
-    "node": {
-      "presets": [ "es2015-node6", "es2016", "es2017", "stage-0" ],
+    "es": {
+      "presets": [["@babel/env", { "modules": false }]],
+      "plugins": [
+        ["@babel/transform-react-jsx", { "pragma": "h" }]
+      ]
+    },
+
+    "cjs": {
+      "presets": ["@babel/env"],
       "plugins": [
         "add-module-exports",
-        ["transform-react-jsx", { "pragma": "h" }],
+        ["@babel/transform-react-jsx", { "pragma": "h" }]
+      ]
+    },
+
+    "node": {
+      "presets": [["@babel/env", { "targets": { "node": 6 } }]],
+      "plugins": [
+        "add-module-exports",
+        ["@babel/transform-react-jsx", { "pragma": "h" }],
         ["module-resolver", {
           "alias": {
             "easy-tz": "easy-tz/cjs",
