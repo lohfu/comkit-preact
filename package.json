@@ -1,6 +1,6 @@
 {
   "name": "comkit-preact",
-  "version": "0.3.0-alpha.1",
+  "version": "0.3.0-alpha.2",
   "description": "Collection of Preact components",
   "main": "node/index.js",
   "module": "es/index.js",
