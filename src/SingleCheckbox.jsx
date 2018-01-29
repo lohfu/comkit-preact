@@ -4,12 +4,19 @@ import classNames from 'classnames'
 import FormField from './FormField'
 
 export default class SingleCheckbox extends FormField {
+  onChange (e) {
+    if (e.target === this.input) {
+      this.setValue(e.target.checked || null)
+    }
+  }
+
   render () {
-    const { name, disabled, title } = this.props
+    const { name, disabled, title, children } = this.props
     const state = this.state
 
     const classes = Object.assign({
       cell: true,
+      'single-checkbox': true,
       'field-container': true,
       empty: !state.value,
       filled: state.value,
@@ -25,17 +32,15 @@ export default class SingleCheckbox extends FormField {
           <input
             name={name}
             disabled={disabled}
-            onBlur={this.onBlur}
             onChange={this.onChange}
-            onFocus={this.onFocus}
             ref={(input) => { this.input = input }}
             type='checkbox'
           />
           <i />
-          <span>{title}</span>
-          {state.error && <label className='error'>{state.error}</label>}
-          <label className='icon' />
+          { (children.length && children) || <span>{title}</span> }
         </label>
+        {state.error && <label className='error'>{state.error}</label>}
+        <label className='icon' />
       </div>
     )
   }
